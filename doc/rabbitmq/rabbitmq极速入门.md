@@ -23,3 +23,9 @@
 
 ### 订阅模式
 ![avatar](images/33.png)
+
+### 路由模式
+![avatar](images/44.png)
+
+### 话题模式
+![avatar](images/55.png)
