@@ -255,7 +255,7 @@ func (r *RabbitMQ) PublishRouting(message string) {
 	// 创建交换机
 	err = r.channel.ExchangeDeclare(
 		r.Exchange,
-		// 交换机的类型：广播类型
+		// 交换机的类型：
 		"direct",
 		// 是否持久化
 		true,
@@ -290,6 +290,96 @@ func (r *RabbitMQ) ReceiveRouting() {
 		r.Exchange,
 		// 交换机的类型：广播类型
 		"direct",
+		// 是否持久化
+		true,
+		false,
+		// true表示这个exchange不可以被client用来推送消息，只能用来进行exchange和exchange之间的绑定
+		false,
+		false,
+		nil,
+	)
+	r.failOnErr(err, "Failed to declare an exchange")
+
+	q, err = r.channel.QueueDeclare(
+		"",
+		false,
+		false,
+		true,
+		false,
+		nil,
+	)
+	r.failOnErr(err, "Failed to declare an queue")
+
+	err = r.channel.QueueBind(
+		q.Name,
+		r.Key,
+		r.Exchange,
+		false,
+		nil,
+	)
+
+	// 消费消息
+	messages, err = r.channel.Consume(q.Name, "", true, false, false, false, nil)
+
+	forever := make(chan bool)
+	go func() {
+		for m := range messages {
+			log.Printf("Received a message: %s", m.Body)
+		}
+	}()
+
+	log.Println("[*] Waiting for messages, To exit press Ctrl+C")
+	<-forever
+}
+
+// 创建话题模式下的RabbitMQ实例
+func NewRabbitMQTopic(exchangeName, routingKey string) *RabbitMQ {
+	return NewRabbitMQ("", exchangeName, routingKey)
+}
+
+func (r *RabbitMQ) PublishTopic(message string) {
+	var (
+		err error
+	)
+	// 创建交换机
+	err = r.channel.ExchangeDeclare(
+		r.Exchange,
+		// 交换机的类型：
+		"topic",
+		// 是否持久化
+		true,
+		false,
+		// true表示这个exchange不可以被client用来推送消息，只能用来进行exchange和exchange之间的绑定
+		false,
+		false,
+		nil,
+	)
+	r.failOnErr(err, "Failed to declare an exchange")
+
+	// 发送消息
+	err = r.channel.Publish(
+		r.Exchange,
+		r.Key,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		})
+}
+
+// “*”用于匹配一个单词，"#"用于匹配多个单词
+func (r *RabbitMQ) ReceiveTopic() {
+	var (
+		err      error
+		q        amqp.Queue
+		messages <-chan amqp.Delivery
+	)
+	// 创建交换机
+	err = r.channel.ExchangeDeclare(
+		r.Exchange,
+		// 交换机的类型：话题类型
+		"topic",
 		// 是否持久化
 		true,
 		false,
