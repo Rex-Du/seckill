@@ -1,9 +1,9 @@
 // Author : rexdu
-// Time : 2020-03-22 01:45 
+// Time : 2020-03-22 01:45
 package main
 
 import (
-	"seckill/RabbitMQ"
+	"seckill/demos/rabbitmqDemo/RabbitMQ"
 )
 
 func main() {

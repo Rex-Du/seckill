@@ -3,7 +3,7 @@
 package main
 
 import (
-	"seckill/RabbitMQ"
+	"seckill/demos/rabbitmqDemo/RabbitMQ"
 	"strconv"
 )
 

@@ -4,7 +4,7 @@ package main
 
 import (
 	"log"
-	"seckill/RabbitMQ"
+	"seckill/demos/rabbitmqDemo/RabbitMQ"
 	"strconv"
 	"time"
 )

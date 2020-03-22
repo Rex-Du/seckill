@@ -2,7 +2,7 @@
 // Time : 2020-03-22 14:57
 package main
 
-import "seckill/RabbitMQ"
+import "seckill/demos/rabbitmqDemo/RabbitMQ"
 
 func main() {
 	var rabbitmq *RabbitMQ.RabbitMQ
