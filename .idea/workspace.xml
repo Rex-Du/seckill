@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7887e1e0-58dd-44be-9713-e1ec0fc30ef8" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" path="C:\Go" />
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="ProjectId" id="1ZRfRKUlrKN25wPE5MvmViLd4vD" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/RabbitMQWork" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\go\seckill\doc\rabbitmq" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\go\seckill\RabbitMQWork" />
+      <recent name="D:\go\seckill\doc\rabbitmq\images" />
+      <recent name="D:\go\seckill\doc\images" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Go Build.go build mainSimplePublish.go">
+    <configuration name="go build mainSimplePublish.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="seckill" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/RabbitMQWork/mainSimplePublish.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build mainSimpleReceive2.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="seckill" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/RabbitMQWork/mainSimpleReceive2.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build mainSimpleReceive.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="seckill" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/mainSimpleReceive.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build seckill" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="seckill" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/mainSimplePublish.go" />
+      <package value="seckill" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build seckill/RabbitMQWork" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="seckill" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/RabbitMQWork/mainSimpleReceive1.go" />
+      <package value="seckill/RabbitMQWork" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build mainSimplePublish.go" />
+        <item itemvalue="Go Build.go build mainSimpleReceive2.go" />
+        <item itemvalue="Go Build.go build seckill/RabbitMQWork" />
+        <item itemvalue="Go Build.go build seckill" />
+        <item itemvalue="Go Build.go build mainSimpleReceive.go" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+    <proxy>https://goproxy.cn</proxy>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="684" y="327" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1584806841214">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="684" y="327" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1050@0.0.1920.1050" timestamp="1584806841214" />
+    <state x="690" y="271" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1584814096439">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="690" y="271" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1050@0.0.1920.1050" timestamp="1584814096439" />
+    <state x="668" y="159" key="#go_build_rabbitmq.go" timestamp="1584808870536">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="668" y="159" key="#go_build_rabbitmq.go/0.0.1920.1050@0.0.1920.1050" timestamp="1584808870536" />
+    <state x="668" y="159" key="#go_build_seckill" timestamp="1584813053903">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="668" y="159" key="#go_build_seckill/0.0.1920.1050@0.0.1920.1050" timestamp="1584813053903" />
+    <state x="668" y="159" key="#go_build_seckill/RabbitMQWork" timestamp="1584814428749">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="668" y="159" key="#go_build_seckill/RabbitMQWork/0.0.1920.1050@0.0.1920.1050" timestamp="1584814428749" />
+    <state width="1877" height="367" key="GridCell.Tab.0.bottom" timestamp="1584814883559">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="367" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1584814883559" />
+    <state width="1877" height="367" key="GridCell.Tab.0.center" timestamp="1584814883559">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="367" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1584814883559" />
+    <state width="1877" height="367" key="GridCell.Tab.0.left" timestamp="1584814883559">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="367" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1584814883559" />
+    <state width="1877" height="367" key="GridCell.Tab.0.right" timestamp="1584814883559">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="367" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1584814883559" />
+  </component>
+</project>
