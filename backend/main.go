@@ -2,7 +2,16 @@
 // Time : 2020-03-22 23:40
 package main
 
-import "github.com/kataras/iris"
+import (
+	"context"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/mvc"
+	"log"
+	"seckill/backend/web/controllers"
+	"seckill/common"
+	"seckill/repositories"
+	"seckill/services"
+)
 
 func main() {
 	// 1.创建iris实例
@@ -20,8 +29,22 @@ func main() {
 		ctx.ViewLayout("")
 		ctx.View("shared/error.html")
 	})
-
+	// 连接数据库
+	db, err := common.NewMysqlConn()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	defer cancelFunc()
 	// 5.注册控制器
+	productRepository := repositories.NewProductManager("product", db)
+	productService := services.NewProductService(productRepository)
+	productParty := app.Party("/product")
+	product := mvc.New(productParty)
+	product.Register(ctx, productService)
+	product.Handle(new(controllers.ProductController))
+
 	// 6.启动服务
 	app.Run(
 		iris.Addr("localhost:8080"),
