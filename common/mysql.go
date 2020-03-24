@@ -11,7 +11,7 @@ import (
 
 //创建mysql 连接
 func NewMysqlConn() (db *sql.DB, err error) {
-	db, err = sql.Open("mysql", "root:rootroot@tcp(192.168.124.129:3306)/seckill?charset=utf8&loc=Local")
+	db, err = sql.Open("mysql", "root:rootroot@tcp(192.168.124.130:3306)/seckill?charset=utf8&loc=Local")
 	return
 }
 

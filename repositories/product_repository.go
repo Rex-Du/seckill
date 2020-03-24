@@ -98,7 +98,7 @@ func (p *ProductManager) SelectByKey(id int64) (product *datamodels.Product, err
 	if err = p.Conn(); err != nil {
 		return &datamodels.Product{}, err
 	}
-	sql := "select * from " + p.table + "where ID=" + strconv.FormatInt(id, 10)
+	sql := "select * from " + p.table + " where ID=" + strconv.FormatInt(id, 10)
 	if rows, err = p.mysqlConn.Query(sql); err != nil {
 		return &datamodels.Product{}, err
 	}
@@ -107,6 +107,7 @@ func (p *ProductManager) SelectByKey(id int64) (product *datamodels.Product, err
 	if len(result) == 0 {
 		return &datamodels.Product{}, nil
 	}
+	product = &datamodels.Product{}
 	common.DataToStructByTagSql(result, product)
 	return
 }
