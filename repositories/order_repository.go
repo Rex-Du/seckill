@@ -1,5 +1,5 @@
 // Author : rexdu
-// Time : 2020-03-25 00:00 
+// Time : 2020-03-25 00:00
 package repositories
 
 import (
@@ -12,10 +12,11 @@ import (
 type IOrderRepository interface {
 	Conn() error
 	Insert(order *datamodels.Order) (orderID int64, err error)
-	Delete(orderID string) bool
+	Delete(orderID int64) bool
 	Update(order *datamodels.Order) error
 	SelectByKey(orderID int64) (order *datamodels.Order, err error)
 	SelectAll() (orders []*datamodels.Order, err error)
+	SelectAllWithInfo() (OrderMap map[int]map[string]string, err error)
 }
 
 type OrderManager struct {
@@ -27,7 +28,7 @@ func NewOrderManager(table string, db *sql.DB) IOrderRepository {
 	return &OrderManager{table: table, mysqlConn: db}
 }
 
-func (o *OrderManager) Conn() error {
+func (o *OrderManager) Conn() (err error) {
 	if o.mysqlConn == nil {
 		mysql, err := common.NewMysqlConn()
 		if err != nil {
@@ -57,7 +58,7 @@ func (o *OrderManager) Insert(order *datamodels.Order) (orderID int64, err error
 	return result.LastInsertId()
 }
 
-func (o *OrderManager) Delete(orderID string) bool {
+func (o *OrderManager) Delete(orderID int64) bool {
 	if err := o.Conn(); err != nil {
 		return false
 	}
@@ -94,7 +95,7 @@ func (o *OrderManager) SelectByKey(orderID int64) (order *datamodels.Order, err 
 	if err = o.Conn(); err != nil {
 		return &datamodels.Order{}, err
 	}
-	sql := "select * from " + p.table + " where ID=" + strconv.FormatInt(orderID, 10)
+	sql := "select * from " + o.table + " where ID=" + strconv.FormatInt(orderID, 10)
 	if rows, err = o.mysqlConn.Query(sql); err != nil {
 		return &datamodels.Order{}, err
 	}
@@ -114,7 +115,7 @@ func (o *OrderManager) SelectAll() (orders []*datamodels.Order, err error) {
 		return nil, err
 	}
 	sql := "select * from " + o.table
-	if rows, err = p.mysqlConn.Query(sql); err != nil {
+	if rows, err = o.mysqlConn.Query(sql); err != nil {
 		return nil, err
 	}
 	defer rows.Close()
@@ -128,4 +129,17 @@ func (o *OrderManager) SelectAll() (orders []*datamodels.Order, err error) {
 		orders = append(orders, order)
 	}
 	return
+}
+
+func (o *OrderManager) SelectAllWithInfo() (OrderMap map[int]map[string]string, err error) {
+	var rows *sql.Rows
+	if err = o.Conn(); err != nil {
+		return nil, err
+	}
+	sql := "select o.ID, p.productName,o.orderStatus from seckill.order as o left join product as p on o.productID=p.ID "
+	if rows, err = o.mysqlConn.Query(sql); err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return common.GetResultRows(rows), err
 }
