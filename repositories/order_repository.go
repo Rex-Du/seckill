@@ -46,7 +46,8 @@ func (o *OrderManager) Insert(order *datamodels.Order) (orderID int64, err error
 	if err = o.Conn(); err != nil {
 		return
 	}
-	sql := "insert into " + o.table + " set userID=?,productID=?,orderStatus=?"
+	// 表名order是mysql的关键字，所以在sql语句中要写成`order`才不会报错
+	sql := "INSERT `" + o.table + "` set userID=?,productID=?,orderStatus=?"
 	stmt, errSql := o.mysqlConn.Prepare(sql)
 	if errSql != nil {
 		return 0, errSql

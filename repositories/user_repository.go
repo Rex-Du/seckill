@@ -52,13 +52,13 @@ func (u *UserManagerRepository) Select(userName string) (user *datamodels.User, 
 	if err != nil {
 		return &datamodels.User{}, err
 	}
-	result := common.GetResultRow(rows)
+	result := common.GetResultRows(rows)
 
 	if len(result) == 0 {
 		return &datamodels.User{}, errors.New("用户不存在")
 	}
 	user = &datamodels.User{}
-	common.DataToStructByTagSql(result, user)
+	common.DataToStructByTagSql(result[0], user)
 	return
 }
 
