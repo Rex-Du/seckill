@@ -3,10 +3,11 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
-	"github.com/kataras/iris/sessions"
 	"seckill/datamodels"
+	"seckill/encrypt"
 	"seckill/services"
 	"seckill/tool"
 	"strconv"
@@ -15,7 +16,7 @@ import (
 type UserController struct {
 	Ctx     iris.Context
 	Service services.IUserService
-	Session *sessions.Session
+	//Session *sessions.Session		// session对服务器压力太大，去掉
 }
 
 func (u *UserController) GetRegister() mvc.View {
@@ -53,11 +54,12 @@ func (u *UserController) GetLogin() mvc.View {
 }
 
 func (u *UserController) PostLogin() mvc.Response {
+	// 获取用户提交的用户名密码
 	var (
 		userName = u.Ctx.FormValue("userName")
 		password = u.Ctx.FormValue("password")
 	)
-
+	// 2. 验证账号密码是否正确
 	user, isOK := u.Service.IsPwdSuccess(userName, password)
 
 	if !isOK {
@@ -65,8 +67,13 @@ func (u *UserController) PostLogin() mvc.Response {
 			Path: "/user/login",
 		}
 	}
-	tool.GlobalCookie(u.Ctx, "uid", strconv.FormatInt(user.ID, 10), 1800)
-	u.Session.Set("userID", strconv.FormatInt(user.ID, 10))
+	uidByte := []byte(strconv.FormatInt(user.ID, 10))
+	uidString, err := encrypt.EnPwdCode(uidByte)
+	if err != nil {
+		fmt.Println(err)
+	}
+	tool.GlobalCookie(u.Ctx, "uid", uidString, 1800)
+	//u.Session.Set("userID", strconv.FormatInt(user.ID, 10))
 
 	return mvc.Response{
 		Path: "/product/detail",
