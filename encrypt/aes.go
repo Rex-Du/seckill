@@ -32,7 +32,7 @@ func AesEncrypt(origData []byte, key []byte) ([]byte, error) {
 	// 对数据进行填充，让数据长度满足需求
 	origData = PKCS7Padding(origData, blockSize)
 	// 采用加密方法中的CBC加密模式
-	blockMode := cipher.NewCBCDecrypter(block, key[:blockSize])
+	blockMode := cipher.NewCBCEncrypter(block, key[:blockSize])
 	crypted := make([]byte, len(origData))
 	blockMode.CryptBlocks(crypted, origData)
 	return crypted, nil
@@ -55,6 +55,9 @@ func PKCS7UnPadding(origDate []byte) ([]byte, error) {
 		return nil, errors.New("加密字符串错误")
 	} else {
 		unpadding := int(origDate[length-1])
+		if unpadding > length {
+			return nil, errors.New("加密字符串错误")
+		}
 		return origDate[:(length - unpadding)], nil
 	}
 }
