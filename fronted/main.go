@@ -10,6 +10,7 @@ import (
 	"seckill/common"
 	"seckill/fronted/middleware"
 	"seckill/fronted/web/controllers"
+	"seckill/rabbitmq"
 	"seckill/repositories"
 	"seckill/services"
 )
@@ -44,6 +45,7 @@ func main() {
 	//		Cookie:  "helloworld",
 	//		Expires: 60 * time.Minute,
 	//	})
+	rabbitmq := rabbitmq.NewRabbitMQSimple("imoocProduct")
 	// 5.注册控制器
 
 	userRepository := repositories.NewUserRepository("user", db)
@@ -60,7 +62,7 @@ func main() {
 	proProduct := app.Party("/product")
 	proProduct.Use(middleware.AuthConProduct)
 	pro := mvc.New(proProduct)
-	pro.Register(productService, orderService)
+	pro.Register(productService, orderService, rabbitmq)
 	pro.Handle(new(controllers.ProductController))
 
 	// 6.启动服务

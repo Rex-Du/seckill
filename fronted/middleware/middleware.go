@@ -9,7 +9,7 @@ import (
 )
 
 func AuthConProduct(ctx iris.Context) {
-	uidString := ctx.GetCookie("uid")
+	uidString := ctx.GetCookie("sign")
 	// 不知道是什么原因cookie中的+变成了空格，所以要先变回来才行
 	uidString = strings.Replace(uidString, " ", "+", 1)
 	if uidString == "" {

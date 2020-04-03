@@ -72,7 +72,8 @@ func (u *UserController) PostLogin() mvc.Response {
 	if err != nil {
 		fmt.Println(err)
 	}
-	tool.GlobalCookie(u.Ctx, "uid", uidString, 1800)
+	tool.GlobalCookie(u.Ctx, "uid", strconv.FormatInt(user.ID, 10), 1800)
+	tool.GlobalCookie(u.Ctx, "sign", uidString, 1800)
 	//u.Session.Set("userID", strconv.FormatInt(user.ID, 10))
 
 	return mvc.Response{

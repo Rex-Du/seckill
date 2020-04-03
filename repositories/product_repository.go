@@ -17,6 +17,7 @@ type IProduct interface {
 	Update(product *datamodels.Product) error
 	SelectByKey(id int64) (*datamodels.Product, error)
 	SelectAll() ([]*datamodels.Product, error)
+	SubProductNum(int64) error
 }
 
 // 2.实现定义的接口
@@ -132,4 +133,21 @@ func (p *ProductManager) SelectAll() (products []*datamodels.Product, err error)
 		products = append(products, product)
 	}
 	return
+}
+
+func (p *ProductManager) SubProductNum(productID int64) error {
+	//1.判断连接是否存在
+	if err := p.Conn(); err != nil {
+		return err
+	}
+	sql := "UPDATE " + p.table + " SET productNum=productNum-1 WHERE ID = ?"
+	stmt, err := p.mysqlConn.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(productID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
