@@ -16,6 +16,7 @@ import (
 	"seckill/rabbitmq"
 	"strconv"
 	"sync"
+	"time"
 )
 
 // 统一验证拦截器，每个接口都需要提前验证
@@ -125,6 +126,7 @@ func Check(rw http.ResponseWriter, r *http.Request) {
 				return
 			}
 			rw.Write([]byte("true"))
+			return
 		}
 	}
 	rw.Write([]byte("false"))
@@ -132,8 +134,9 @@ func Check(rw http.ResponseWriter, r *http.Request) {
 }
 
 // 设置集群地址
-//var hostArray = []string{"192.168.124.135", "192.168.124.136"}
-var hostArray = []string{"127.0.0.1"}
+var hostArray = []string{"10.198.75.60"}
+
+//var hostArray = []string{"127.0.0.1"}
 var localHost = "127.0.0.1"
 var port = "8083"
 
@@ -145,30 +148,32 @@ var rabbitmqValidate *rabbitmq.RabbitMQ
 var GetOneIp = "111.229.61.201"
 var GetOnePort = "8080"
 
+//服务器间隔时间，单位秒
+var interval = 20
+
 // 用来存放控制信息
 type AccessControl struct {
 	// 存放用户想要存放的信息
-	sourcesArray map[int]interface{}
+	sourcesArray map[int]time.Time
 	sync.RWMutex
 }
 
 var accessControl = &AccessControl{
-	sourcesArray: make(map[int]interface{}),
+	sourcesArray: make(map[int]time.Time),
 }
 
 // 获取指定的数据
-func (m *AccessControl) GetNewRecord(uid int) interface{} {
+func (m *AccessControl) GetNewRecord(uid int) time.Time {
 	m.RWMutex.RLock()
 	defer m.RWMutex.RUnlock()
-	data := m.sourcesArray[uid]
-	return data
+	return m.sourcesArray[uid]
 }
 
 //设置记录
 func (m *AccessControl) SetNewRecord(uid int) {
 	m.RWMutex.Lock()
 	defer m.RWMutex.Unlock()
-	m.sourcesArray[uid] = "hello imooc"
+	m.sourcesArray[uid] = time.Now()
 }
 
 func (m *AccessControl) GetDistributedRight(req *http.Request) bool {
@@ -202,10 +207,16 @@ func (m *AccessControl) GetDistributedRight(req *http.Request) bool {
 
 // 获取本机map
 func (a *AccessControl) GetDataFromMap(uid int) (isOK bool) {
-	data := a.GetNewRecord(uid)
-	if data == nil {
-		isOK = false
+	// 获取记录
+	dataRecord := a.GetNewRecord(uid)
+	if !dataRecord.IsZero() {
+		//业务判断，是否在指定时间之后
+		if dataRecord.Add(time.Duration(interval) * time.Second).After(time.Now()) {
+			return false
+		}
 	}
+	// 设置上次抢成功的时间
+	a.SetNewRecord(uid)
 	return true
 }
 
@@ -267,11 +278,11 @@ func main() {
 		hashConsistent.Add(v)
 	}
 
-	//localIP, err := common.GetIntranceIP()
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//localHost = localIP
+	localIP, err := common.GetIntranceIP()
+	if err != nil {
+		fmt.Println(err)
+	}
+	localHost = localIP
 	fmt.Println(localHost)
 	rabbitmqValidate = rabbitmq.NewRabbitMQSimple("imoocProduct")
 

@@ -27,7 +27,8 @@ func (p *ProductController) GetDetail() mvc.View {
 	product, _ := p.ProductService.GetProductByID(1)
 	return mvc.View{
 		Layout: "shared/productLayout.html",
-		Name:   "product/view.html",
+		//Name:   "product/view.html",
+		Name: "htmlProductShow/htmlProduct.html",
 		Data: iris.Map{
 			"product": product,
 		},

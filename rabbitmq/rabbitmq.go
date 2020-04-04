@@ -14,7 +14,7 @@ import (
 )
 
 // url格式： amqp://用户名：密码@rabbitmq服务器地址：端口/virtualhost
-const MQURL = "amqp://rexdu:rootroot@192.168.124.135:5672/rexdu"
+const MQURL = "amqp://rexdu:rootroot@111.229.61.201:5672/rexdu"
 
 type RabbitMQ struct {
 	conn    *amqp.Connection
