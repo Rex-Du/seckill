@@ -10,18 +10,24 @@ import (
 
 var sum int64 = 0
 
-var total int64 = 10000
+var total int64 = 100000
+var req_count = 0 // 抢购的人数，用来控制放量，比如每100个人请求，才放出一个商品
 
 var mutex sync.Mutex
 
 func GetOneProduct() bool {
 	mutex.Lock()
 	defer mutex.Unlock()
-	if sum < total {
-		sum += 1
-		return true
+	req_count += 1
+	if req_count%100 == 0 {
+		if sum < total {
+			sum += 1
+			if sum%100 == 0 {
+				golog.Println("已售出：", sum)
+			}
+			return true
+		}
 	}
-	golog.Info("已售罄！")
 	return false
 }
 

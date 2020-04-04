@@ -3,13 +3,17 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/kataras/golog"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"seckill/common"
+	"seckill/datamodels"
 	"seckill/encrypt"
+	"seckill/rabbitmq"
 	"strconv"
 	"sync"
 )
@@ -52,19 +56,94 @@ func checkInfo(checkStr string, signStr string) bool {
 
 }
 
-func Check(rw http.ResponseWriter, r *http.Request) {
-	fmt.Println("执行check！")
-	// 分布式权限验证:去访问对应的主机，
+func CheckRight(rw http.ResponseWriter, r *http.Request) {
 	if !accessControl.GetDistributedRight(r) {
 		rw.Write([]byte("false"))
+		return
 	}
+	rw.Write([]byte("true"))
+	return
+}
+
+func Check(rw http.ResponseWriter, r *http.Request) {
+	fmt.Println("执行check！")
+	golog.Debug("执行check")
+	// 获取url中的参数
+	queryForm, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil || len(queryForm["productID"]) <= 0 {
+		rw.Write([]byte("false"))
+		return
+	}
+	productIDstr := queryForm["productID"][0]
+	golog.Debug("获取到productID", productIDstr)
+	// 获取cookie
+	uidCookie, err := r.Cookie("uid")
+	if err != nil {
+		rw.Write([]byte("false"))
+		return
+	}
+	// 分布式权限验证:去访问对应的主机，
+	//1.分布式权限验证
+	right := accessControl.GetDistributedRight(r)
+	if right == false {
+		rw.Write([]byte("false"))
+		return
+	}
+	// 获取数量控制权限，防止秒杀超卖
+	hostUrl := "http://" + GetOneIp + ":" + GetOnePort + "/getOne"
+	resp, body, err := GetCurl(hostUrl, r)
+	if err != nil {
+		rw.Write([]byte("false"))
+		return
+	}
+	if resp.StatusCode == 200 {
+		if string(body) == "true" {
+			// 整合下单
+			productID, err := strconv.ParseInt(productIDstr, 10, 64)
+			if err != nil {
+				golog.Error(productID, "失败")
+				rw.Write([]byte("false"))
+				return
+			}
+			userID, err := strconv.ParseInt(uidCookie.Value, 10, 64)
+			if err != nil {
+				golog.Error(userID, "失败")
+				rw.Write([]byte("false"))
+				return
+			}
+			message := datamodels.Message{productID, userID}
+			msgByte, err := json.Marshal(message)
+			if err != nil {
+				golog.Error(message, "失败")
+				rw.Write([]byte("false"))
+				return
+			}
+			err = rabbitmqValidate.PublishSimple(string(msgByte))
+			if err != nil {
+				golog.Error(err, "失败")
+				rw.Write([]byte("false"))
+				return
+			}
+			rw.Write([]byte("true"))
+		}
+	}
+	rw.Write([]byte("false"))
+	return
 }
 
 // 设置集群地址
+//var hostArray = []string{"192.168.124.135", "192.168.124.136"}
 var hostArray = []string{"127.0.0.1"}
 var localHost = "127.0.0.1"
-var port = "8081"
+var port = "8083"
+
+// 一个全局一致性实例
 var hashConsistent *common.Consistent
+var rabbitmqValidate *rabbitmq.RabbitMQ
+
+// 数量控制服务器内网ip
+var GetOneIp = "111.229.61.201"
+var GetOnePort = "8080"
 
 // 用来存放控制信息
 type AccessControl struct {
@@ -132,7 +211,7 @@ func (a *AccessControl) GetDataFromMap(uid int) (isOK bool) {
 
 // 获取其他节点的map处理结果
 func GetDataFromOtherMap(host string, request *http.Request) (isOK bool) {
-	hostUrL := "http://" + host + port + "/check"
+	hostUrL := "http://" + host + ":" + port + "/checkRight"
 	resp, body, err := GetCurl(hostUrL, request)
 	if err != nil {
 		golog.Error(err)
@@ -188,9 +267,19 @@ func main() {
 		hashConsistent.Add(v)
 	}
 
+	//localIP, err := common.GetIntranceIP()
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//localHost = localIP
+	fmt.Println(localHost)
+	rabbitmqValidate = rabbitmq.NewRabbitMQSimple("imoocProduct")
+
 	filter := common.NewFilter()
 	filter.RegisterFilterUri("/check", Auth)
+	filter.RegisterFilterUri("/checkRight", Auth)
 	http.HandleFunc("/check", filter.Handle(Check))
+	http.HandleFunc("/checkRight", filter.Handle(CheckRight))
 	// 启动服务端口
-	http.ListenAndServe(":8083", nil)
+	http.ListenAndServe(":"+port, nil)
 }

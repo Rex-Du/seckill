@@ -10,6 +10,7 @@ import (
 	"log"
 	"seckill/datamodels"
 	"seckill/services"
+	"sync"
 )
 
 // url格式： amqp://用户名：密码@rabbitmq服务器地址：端口/virtualhost
@@ -25,6 +26,7 @@ type RabbitMQ struct {
 	// key
 	Key   string
 	Mqurl string
+	sync.Mutex
 }
 
 func NewRabbitMQ(queueName, exchange, key string) *RabbitMQ {
@@ -67,6 +69,8 @@ func NewRabbitMQSimple(queueName string) *RabbitMQ {
 // 发布消息的函数
 func (r *RabbitMQ) PublishSimple(message string) (err error) {
 	// 申请队列，如果队列不存在就创建队列，保证消息能发送到队列中
+	r.Lock()
+	defer r.Unlock() // 避免channel出现抢占问题
 	_, err = r.channel.QueueDeclare(
 		r.QueueName,
 		// 是否持久化
